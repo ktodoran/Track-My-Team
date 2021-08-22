@@ -3,6 +3,7 @@ class Manager {
         this.name = name;
         this.id = id;
         this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 
     getName() {
@@ -15,6 +16,10 @@ class Manager {
 
     getEmail() {
         return this.email;
+    }
+
+    getPhoneNumber(){
+        return this.phoneNumber;
     }
 
     getPosition() {
