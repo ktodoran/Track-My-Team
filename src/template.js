@@ -21,4 +21,4 @@ const cardTemplate = (groupInfo) => {
     `;
 }
 
-module.exports = cardTemplate
+module.exports = {cardTemplate}
