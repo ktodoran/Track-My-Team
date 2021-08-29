@@ -1,11 +1,14 @@
 //Required Modules
 const inquirer = require('inquirer');
 const fs = require('fs');
+
+//Sources
 const Manager = require('./lib/Manager');
 const Intern = require('./lib/Intern');
 const Engineer = require('./lib/Engineer');
-const bodyTemplate = require('./src/template');
-const createTemplate = require('./src/generate-page');
+
+//HTML Template
+const pageTemplate = require('./lib/template');
 
 //Leave Array Empty for Employee Form
 const employeeArr = [];
@@ -21,7 +24,7 @@ const validation = input => {
 };
 
 //Questions
-const managerQuestions = [
+const employeeApplication = [
     {
         type: 'input',
         name: 'teamName',
@@ -30,144 +33,104 @@ const managerQuestions = [
     },
     {
         type: 'input',
-        name: 'managerName',
-        message: "Who is your Team Manager?",
+        name: 'employeeName',
+        message: 'What is this employee\'s name?',
         validation: validation
     },
     {
         type: 'input',
-        name: 'managerId',
-        message: "What is your managers' ID number?",
+        name: 'employeeID',
+        message: 'What is your employee ID number?',
         validation: validation
     },
-
     {
         type: 'input',
-        name: 'managerEmail',
-        message: "What is your managers' email address?",
+        name: 'employeeEmail',
+        message: 'What is your employee email address?',
         validation: validation
     },
+    {
+        type: 'list',
+        name: 'position',
+        message: 'What is the employee\'s position? Select from the following:',
+        choices:
+            () => {
+                if (employeeArr.some(employee => employee.role === 'Manager')) {
+                    return ['Engineer', 'Intern']
+                } else {
+                    return ['Manager', 'Engineer', 'Intern']
+                }
+            }
+    },
+    //Ask for Phone Number if Position is Manager
     {
         type: 'input',
         name: 'managerPhoneNumber',
-        message: "What is your managers' phone number?",
-        validation: validation
-    }
-
-];
-
-//Start Questions Prompt
-const promptStartQuestions = () => {
-    return inquirer.prompt(managerQuestions)
-}
-
-const startEmployeeQuestions = employeeInfo => {
-    if (!employeeInfo.employees) {
-        employeeInfo.employees = [];
-    }
-
-    console.log(`
-    ================
-    CREATE NEW EMPLOYEE 
-    ================
-    `);
-
-    return inquirer.prompt([
-        {
-            type: 'lsit',
-            name: 'employeePosition',
-            message: "What is this Employee's position?",
-            choices: ['Engineer', 'Intern']
-        },
-        {
-            type: 'input',
-            name: 'employeeName',
-            message: "What is this employee's name?",
-            validation: validation
-        },
-        {
-            type: 'input',
-            name: 'employeeIdentification',
-            message: "What is this employee's ID number?",
-            validation: validation
-        },
-        {
-            type: 'input',
-            name: 'employeeEmail',
-            message: "What is this employee's email address?",
-            validation: validation
-        },
-        {
-            type: 'input',
-            name: 'employeeGitHub',
-            message: "what is this employee's GitHub handle?",
-            when: ({ employeeRole }) => {
-                if (employeeRole === "Engineer") {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            },
-            validation: validation
-        },
-        {
-            type: 'input',
-            name: 'employeeUniversity',
-            message: 'Where is this employee attending school?',
-            when: ({ employeeRole }) => {
-                if (employeeRole === "Intern") {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            },
-            validation: validation
-        },
-        {
-            type: 'confirm',
-            name: 'newEmployee',
-            message: "Do you have another Team Member?",
-            default: true
+        message: 'What is your manager\'s phone number?',
+        when: ({ position }) => {
+            if (position === 'Manager') {
+                return true;
+            } else {
+                return false;
+            }
         }
-    ])
-        .then(employeeEntries => {
-            employeeInfo.employees.push(employeeEntries)
-            if (employeeInfo.employeeAdd) {
-                return promptEmployeeQuestions(employeeInfo);
+    },
+    //Ask for Intern School
+    {
+        type: 'input',
+        name: 'school',
+        message: 'What school is this Intern attending?',
+        when: ({ position }) => {
+            if (position === 'Intern') {
+                return true;
+            } else {
+                return false;
             }
-            else {
-                return employeeEntries
+        }
+    },
+    //Add A New Employee
+    {
+        type: 'confirm',
+        name: 'addNewEmployee',
+        message: 'Would you like to add another employee?',
+        when: ({ newEmployee }) => {
+            if (newEmployee === true) {
+                console.log(`
+                    ================
+                    CREATE NEW EMPLOYEE 
+                    ================
+                    `);
+            } else {
+                return false;
             }
-        })
-};
+        }
+    }
+]
 
 //initialize application
-promptStartQuestions()
-    .then(promptEmployeeQuestions)
-    .then(employeeData => {
-        const manager = new Manager(employeeInfo.managerName, parseInt(employeeInfo.managerId), employeeInfo.managerEmail, employeeInfo.managerOfficeNum);
-        employeeArr.push(manager);
-        employeeInfo.employees.forEach(element => {
-            if (element.employeeRole === "Engineer") {
-                const engineer = new Engineer(element.employeeName, parseInt(element.employeeId), element.employeeEmail, element.employeeGithub);
-                employeeArr.push(engineer);
-            }
-            else if (element.employeeRole === "Intern") {
-                const intern = new Intern(element.employeeName, parseInt(element.employeeId), element.employeeEmail, element.employeeSchool);
-                employeeArr.push(intern);
-            }
-        })
-
-        return bodyTemplate(employeeData.teamName, employeeArr);
-    })
-    .then(pageHTML => {
-        return createTemplate(pageHTML);
-    })
-    .then(HTMLResponse => {
-        console.log(HTMLResponse.message);
-    })
-    .catch(err => {
-        console.log(err);
+const promptStartQuestions = () => {
+return inquirer.prompt(employeeApplication)
+    .then(responseData => {
+        employeeArr.push(responseData);
+        if (responseData.addEmployee) {
+            return promptStartQuestions();
+        } else {
+            return employeeArr;
+        };
     });
+};
+
+//Write File to HTML
+const tempCreation = (pageInfo) => {
+    fs.writeFile('./dist/index.html', pageInfo, err => {
+        if (err) {
+            throw err
+        };
+        console.log('Team Profile created in dist folder!');
+    })
+};
+
+promptStartQuestions()
+    .then(groupInfo => cardTemplate(groupInfo))
+    .then(completedHTML => tempCreation(completedHTML))
+    .catch(err => console.log(err));
