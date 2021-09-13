@@ -1,136 +1,274 @@
-//Required Modules
-const inquirer = require('inquirer');
-const fs = require('fs');
+const mysql = require("mysql");
+const inquirer = require("inquirer");
 
-//Sources
-const Manager = require('./lib/Manager');
-const Intern = require('./lib/Intern');
-const Engineer = require('./lib/Engineer');
+var connection = mysql.createConnection({
+host: "localhost",
 
-//HTML Template
-const pageTemplate = require('./lib/template');
+// The port; if not 8080
+port: process.env.PORT || 8080,
 
-//Leave Array Empty for Employee Form
-const employeeArr = [];
+// Username
+user: "root",
 
-//Validation of User Input
-const validation = input => {
-    if (input) {
-        return true;
+// Password
+password: "Kazkillz925!",
+database: "employee_db",
+});
+
+connection.connect(function (err) {
+if (err) throw err;
+console.log("connected as id " + connection.threadId + "\n");
+askQuestions();
+});
+
+function askQuestions() {
+inquirer
+.prompt({
+    message: "What would you like to do?",
+    type: "list",
+    choices: [
+        "View all employees",
+        "View employees by manager",
+        "View all departments",
+        "View all roles",
+        "Add employee",
+        "Add department",
+        "Add role",
+        "Update employee role",
+        "Update employee manager",
+        "QUIT - I'm Done!",
+    ],
+    name: "choice",
+})
+.then((answers) => {
+    console.log(answers.choice);
+    switch (answers.choice) {
+        case "view all employees":
+            viewEmployees();
+            break;
+
+        case "view employees by manager":
+            console.log("Anser to manager id number" + answers.choice);
+            viewEmployeesByManager();
+            break;
+
+        case "view all departments":
+            viewDepartments();
+            break;
+
+        case "view all roles":
+            viewRoles();
+            break;
+
+        case "add employee":
+            addEmployee();
+            break;
+
+        case "add department":
+            addDepartment();
+            break;
+
+        case "add role":
+            addRole();
+            break;
+
+        case "update employee role":
+            updateEmployeeRole();
+            break;
+
+        case "update employee manager":
+            updateEmployeeManager();
+            break;
+
+        default:
+            connection.end();
+            break;
     }
-    else {
-        console.log("This question must be answered.");
-    }
-};
+});
+}
 
-//Questions
-const employeeApplication = [
+function viewEmployees() {
+connection.query("SELECT * FROM employee", function (err, data) {
+console.table(data);
+askQuestions();
+});
+}
+
+function viewDepartments() {
+connection.query("SELECT * FROM department", function (err, data) {
+console.table(data);
+askQuestions();
+});
+}
+
+function viewRoles() {
+connection.query("SELECT * FROM role", function (err, data) {
+console.table(data);
+askQuestions();
+});
+}
+
+function addEmployee() {
+inquirer
+.prompt([
     {
-        type: 'input',
-        name: 'teamName',
-        message: 'What is the name of your team?',
-        validation: validation
+        type: "input",
+        name: "firstName",
+        message: "What is the employees first name?",
     },
     {
-        type: 'input',
-        name: 'employeeName',
-        message: 'What is this employee\'s name?',
-        validation: validation
+        type: "input",
+        name: "lastName",
+        message: "What is the employees last name?",
     },
     {
-        type: 'input',
-        name: 'employeeID',
-        message: 'What is your employee ID number?',
-        validation: validation
+        type: "number",
+        name: "roleId",
+        message: "What is the employees role ID",
     },
     {
-        type: 'input',
-        name: 'employeeEmail',
-        message: 'What is your employee email address?',
-        validation: validation
+        type: "number",
+        name: "managerId",
+        message: "What is the employees manager's ID?",
     },
-    {
-        type: 'list',
-        name: 'position',
-        message: 'What is the employee\'s position? Select from the following:',
-        choices:
-            () => {
-                if (employeeArr.some(employee => employee.role === 'Manager')) {
-                    return ['Engineer', 'Intern']
-                } else {
-                    return ['Manager', 'Engineer', 'Intern']
-                }
-            }
-    },
-    //Ask for Phone Number if Position is Manager
-    {
-        type: 'input',
-        name: 'managerPhoneNumber',
-        message: 'What is your manager\'s phone number?',
-        when: ({ position }) => {
-            if (position === 'Manager') {
-                return true;
-            } else {
-                return false;
-            }
+])
+.then(function (res) {
+    connection.query(
+        "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+        [res.firstName, res.lastName, res.roleId, res.managerId],
+        function (err, data) {
+            if (err) throw err;
+            console.table("Successfully Inserted");
+            askQuestions();
         }
-    },
-    //Ask for Intern School
+    );
+});
+}
+function addDepartment() {
+inquirer
+.prompt([
     {
-        type: 'input',
-        name: 'school',
-        message: 'What school is this Intern attending?',
-        when: ({ position }) => {
-            if (position === 'Intern') {
-                return true;
-            } else {
-                return false;
-            }
-        }
+        type: "input",
+        name: "department",
+        message: "What is the department that you want to add?",
     },
-    //Add A New Employee
-    {
-        type: 'confirm',
-        name: 'addNewEmployee',
-        message: 'Would you like to add another employee?',
-        when: ({ newEmployee }) => {
-            if (newEmployee === true) {
-                console.log(`
-                    ================
-                    CREATE NEW EMPLOYEE 
-                    ================
-                    `);
-            } else {
-                return false;
-            }
+])
+.then(function (res) {
+    connection.query(
+        "INSERT INTO department (name) VALUES (?)",
+        [res.department],
+        function (err, data) {
+            if (err) throw err;
+            console.table("Successfully Inserted");
+            askQuestions();
         }
-    }
-]
+    );
+});
+}
 
-//initialize application
-const promptStartQuestions = () => {
-return inquirer.prompt(employeeApplication)
-    .then(responseData => {
-        employeeArr.push(responseData);
-        if (responseData.addEmployee) {
-            return promptStartQuestions();
-        } else {
-            return employeeArr;
-        };
-    });
-};
+function addRole() {
+inquirer
+.prompt([
+    {
+        message: "enter title:",
+        type: "input",
+        name: "title",
+    },
+    {
+        message: "enter salary:",
+        type: "number",
+        name: "salary",
+    },
+    {
+        message: "enter department ID:",
+        type: "number",
+        name: "department_id",
+    },
+])
+.then(function (response) {
+    console.log("Called the connection function " + response);
+    connection.query(
+        "INSERT INTO role (title, salary, department_id) values (?, ?, ?)",
+        [response.title, response.salary, response.department_id],
+        function (err, data) {
+            console.table(data);
+        }
+    );
+    askQuestions();
+});
+}
 
-//Write File to HTML
-const tempCreation = (pageInfo) => {
-    fs.writeFile('./dist/index.html', pageInfo, err => {
-        if (err) {
-            throw err
-        };
-        console.log('Team Profile created in dist folder!');
-    })
-};
+function updateEmployeeRole() {
+inquirer
+.prompt([
+    {
+        message:
+            "which employee would you like to update? (use first name only for now)",
+        type: "input",
+        name: "name",
+    },
+    {
+        message: "enter the new role ID:",
+        type: "number",
+        name: "role_id",
+    },
+])
+.then(function (response) {
+    connection.query(
+        "UPDATE employee SET role_id = ? WHERE first_name = ?",
+        [response.role_id, response.name],
+        function (err, data) {
+            console.table(data);
+        }
+    );
+    askQuestions();
+});
+}
 
-promptStartQuestions()
-    .then(groupInfo => cardTemplate(groupInfo))
-    .then(completedHTML => tempCreation(completedHTML))
-    .catch(err => console.log(err));
+function updateEmployeeManager() {
+inquirer
+.prompt([
+    {
+        message:
+            "which employee would you like to update? (use first name only for now)",
+        type: "input",
+        name: "name",
+    },
+    {
+        message: "enter the new manager ID:",
+        type: "number",
+        name: "manager_id",
+    },
+])
+.then(function (response) {
+    connection.query(
+        "UPDATE employee SET manager_id = ? WHERE first_name = ?",
+        [response.manager_id, response.name],
+        function (err, data) {
+            console.table(data);
+        }
+    );
+    askQuestions();
+});
+}
+
+function viewEmployeesByManager() {
+inquirer
+.prompt([
+    {
+        message: "Enter the manager ID to list Employees For:",
+        type: "number",
+        name: "manager_id",
+    },
+])
+.then(function (response) {
+    connection.query(
+        "SELECT * FROM employee WHERE manager_id = ?",
+        [response.manager_id],
+        function (err, data) {
+            console.table(data);
+            askQuestions();
+        }
+    );
+});
+}
