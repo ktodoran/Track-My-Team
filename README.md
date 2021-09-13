@@ -1,4 +1,4 @@
-# Track My Team (SQL DB Employee Tracker)
+# Track My Team
 
 [![License: Mozilla 2.0](https://img.shields.io/badge/license-Mozilla%202.0-blue.svg)](https://opensource.org/licenses/MPL-2.0)
 
@@ -43,7 +43,7 @@
 
   ## Usage
 
-  After the installation steps you will use the command line to open the root directory of the project and run the app with `node index`. Follow the prompts to build the page with data for each member of your team. Once complete the finished page will be written to the 'dist' folder.
+  After the installation steps you will use the command line to open the root directory of the project and run the app with `node index`. Follow the prompts to build the page with   data for each member of your team. Once complete the finished page will be written to the 'dist' folder.
 
   ## Contributing
 
