@@ -1,4 +1,4 @@
-# Track My Team
+# Track My Team(SQL DB Employee Tracker)
 
 [![License: Mozilla 2.0](https://img.shields.io/badge/license-Mozilla%202.0-blue.svg)](https://opensource.org/licenses/MPL-2.0)
 
