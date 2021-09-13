@@ -36,26 +36,26 @@ VALUES ("Legal Team Lead", 250000, 4);
 
 /* === || EMPLOYEE ARRAY || === */
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-/* John Doe - Sales Lead - Sales Department */
+/* Dwayne "The Rock" Johnson - Sales Lead - Sales Department */
 VALUES ("Dwayne The Rock", "Johnson", 1, null); 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 /* Ryan Reynolds - Sales Lead - Sales Department */
 VALUES ("Ryan", "Reynolds", 1, 1);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-/* Jane Doe - Salesperson - Sales Department */
+/* Peter Parker - Salesperson - Sales Department */
 VALUES ("Peter", "Parker", 2, 2);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-/* Joshua Small - Lead Engineer - Engineering Department */
+/* Kyle Todoran - Lead Engineer - Engineering Department */
 VALUES ("Kyle", "Todoran", 3, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-/* Maggie Small - Software Engineer - Engineering Department */
+/* Michael Jordan - Software Engineer - Engineering Department */
 VALUES ("Michael", "Jordan", 4, 4);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-/* George Clooney - Account Manager- Accounting Department */
+/* Javier Baez - Account Manager- Accounting Department */
 VALUES ("Javier", "Baez", 5, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-/* James Brown - Accountant - Accounting Department */
+/* Paul Georgo - Accountant - Accounting Department */
 VALUES ("Paul", "George", 6, 6);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-/* Tom Allen - Leagl Team Lead - Legal Department */
-VALUES ("Khawi", "Leonard", 7, null);
+/* Kawhi Leonard - Leagl Team Lead - Legal Department */
+VALUES ("Kawhi", "Leonard", 7, null);
