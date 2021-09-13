@@ -11,13 +11,8 @@ var connection = mysql.createConnection({
     password: "Kazkillz925!",
     database: "employee_tracker_DB",
     });
-
-    connection.connect(function (err) {
-    if (err) throw err;
-        console.log("connected as id " + connection.threadId + "\n");
-
-        askQuestions();
-});
+ 
+  askQuestions();
 
 function askQuestions() {
     inquirer.prompt({

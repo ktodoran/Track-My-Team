@@ -11,25 +11,25 @@ INSERT INTO department (name)
 VALUES ("Legal");
 
 /* === || ROLE ARRAY || === */
-INSERT INTO role (title, salary, department_id)
+INSERT into role (title, salary, department_id)
 VALUES ("Sales Lead", 100000, 1);
 /* Sales Department */
-INSERT INTO role (title, salary, department_id)
+INSERT into role_id (title, salary, department_id)
 VALUES ("Salesperson", 80000, 1);
 /* Sales Department */
-INSERT INTO role (title, salary, department_id)
+INSERT into role_id (title, salary, department_id)
 VALUES ("Lead Engineer", 150000, 2);
 /* Engineering Department */
-INSERT INTO role (title, salary, department_id)
+INSERT into role_id (title, salary, department_id)
 VALUES ("Software Engineer", 120000, 2);
 /* Engineering Department */
-INSERT INTO role (title, salary, department_id)
+INSERT into role_id (title, salary, department_id)
 VALUES ("Account Manager", 150000, 3);
 /* Accounting Department */
-INSERT INTO role (title, salary, department_id)
+INSERT into role_id (title, salary, department_id)
 VALUES ("Accountant", 125000, 3);
 /* Accounting Department */
-INSERT INTO role (title, salary, department_id)
+INSERT into role_id (title, salary, department_id)
 VALUES ("Legal Team Lead", 250000, 4);
 /* Legal Department */
 
