@@ -62,6 +62,10 @@
 
   This project is licensed with [Mozilla Public License 2.0](https://opensource.org/licenses/MPL-2.0).
 
+  ## Video Walkthrough
+
+  [Video Walk Through](https://youtu.be/h9REIs0p3CE)
+
   ## Questions
 
   If you have questions about this project please contact me at [ktodoran@gmail.com](mailto:ktodoran@gmail.com).
