@@ -40,6 +40,9 @@
   Follow these steps for installing this project:
 
   - Clone the repository - Install the inquirer package using `npm install inquirer`.
+  - On the command line, use mysql -u root -p to login to MySQL
+  - Source both sql files
+  - Finally run 'node index' to start prompt
 
   ## Usage
 
