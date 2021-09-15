@@ -1,4 +1,4 @@
-USE employee_tracker_DB;
+USE employee_DB;
 
 /* === || DEPARTMENT ARRAY || === */
 INSERT INTO department (name)
